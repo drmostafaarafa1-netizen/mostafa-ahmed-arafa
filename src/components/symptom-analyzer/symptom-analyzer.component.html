@@ -1,0 +1,71 @@
+<div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-xl animate-fade-in">
+  <h2 class="text-3xl font-bold text-center text-teal-700 mb-2 flex items-center justify-center">
+    <i class="fas fa-vial-circle-check text-teal-500 ml-3"></i>
+    استبيان تحليل الأعراض الغذائية
+  </h2>
+  <p class="text-center text-gray-600 mb-8">اكتب الأعراض التي تعاني منها (مثل: إرهاق مستمر، تساقط شعر، شحوب الجلد) للحصول على تحليل للنقص المحتمل في الفيتامينات والمعادن.</p>
+
+  <div class="space-y-4">
+    <textarea 
+      [(ngModel)]="symptoms"
+      rows="4"
+      class="w-full p-4 border-2 border-gray-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 transition duration-300 shadow-sm"
+      placeholder="مثال: أشعر بالتعب الدائم وصعوبة في التركيز..."
+    ></textarea>
+    <button 
+      (click)="analyzeSymptoms()" 
+      [disabled]="isLoading()" 
+      class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:-translate-y-1 duration-300 disabled:bg-teal-400 disabled:shadow-none disabled:transform-none shadow-lg shadow-teal-500/50 hover:shadow-xl hover:shadow-teal-600/40 flex items-center justify-center"
+    >
+      @if (isLoading()) {
+        <i class="fas fa-spinner fa-spin"></i>
+        <span class="mr-2">جاري التحليل...</span>
+      } @else {
+        <i class="fas fa-magnifying-glass-chart mr-2"></i>
+        <span>حلل الآن</span>
+      }
+    </button>
+  </div>
+  
+  @if (error()) {
+    <div class="mt-6 p-4 bg-red-100 border-r-4 border-red-500 text-red-700 rounded-lg shadow-sm">
+      <p>{{ error() }}</p>
+    </div>
+  }
+
+  @if (result(); as res) {
+    <div class="mt-8 animate-fade-in">
+      <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">نتائج التحليل المبدئي</h3>
+      
+      <div class="space-y-6">
+        @for (deficiency of res.potentialDeficiencies; track deficiency.name) {
+          <div class="bg-gray-50 border-r-4 border-teal-500 rounded-lg p-6 shadow-sm">
+            <h4 class="text-xl font-bold text-teal-800 mb-2">{{ deficiency.name }}</h4>
+            <p class="text-gray-600 mb-4">{{ deficiency.explanation }}</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <h5 class="font-semibold text-gray-700 mb-2 flex items-center"><i class="fas fa-leaf mr-2 text-green-500"></i> مصادر غذائية غنية به:</h5>
+                <ul class="list-disc list-inside space-y-1 text-gray-600">
+                  @for (source of deficiency.foodSources; track source) {
+                    <li>{{ source }}</li>
+                  }
+                </ul>
+              </div>
+              <div>
+                <h5 class="font-semibold text-gray-700 mb-2 flex items-center"><i class="fas fa-capsules mr-2 text-blue-500"></i> الجرعة اليومية الموصى بها:</h5>
+                <p class="text-gray-600">{{ deficiency.recommendedDosage }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (res.disclaimer) {
+        <div class="mt-8 p-4 bg-amber-100 border-r-4 border-amber-500 text-amber-800 rounded-lg shadow-sm">
+          <p class="font-bold flex items-center"><i class="fas fa-triangle-exclamation mr-2"></i>إخلاء مسؤولية هام:</p>
+          <p>{{ res.disclaimer }}</p>
+        </div>
+      }
+    </div>
+  }
+</div>

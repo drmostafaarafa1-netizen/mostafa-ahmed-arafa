@@ -1,0 +1,283 @@
+<div class="min-h-screen bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-white to-gray-50 shadow-lg sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-4 rtl:space-x-reverse">
+        <div class="text-teal-500">
+           <i class="fas fa-heart-pulse fa-3x"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">برنامج تخطيط الأنظمة الغذائية</h1>
+          <p class="text-sm text-gray-500">المدعوم من د/مصطفى عرفة</p>
+        </div>
+      </div>
+      <nav class="hidden md:flex space-x-4 rtl:space-x-reverse">
+        <button (click)="currentView.set('assessment')" 
+                [class.bg-teal-500]="currentView() === 'assessment' || currentView() === 'results'" 
+                [class.text-white]="currentView() === 'assessment' || currentView() === 'results'" 
+                [class.shadow-lg]="currentView() === 'assessment' || currentView() === 'results'"
+                [class.shadow-teal-500/40]="currentView() === 'assessment' || currentView() === 'results'"
+                class="flex items-center px-5 py-2.5 rounded-full text-gray-600 font-semibold hover:bg-teal-100 hover:text-teal-700 transition-all duration-300 transform hover:-translate-y-0.5">
+          <i class="fas fa-clipboard-list ml-2"></i>
+          <span>التقييم والنتائج</span>
+        </button>
+        
+        <button (click)="currentView.set('symptom-analyzer')" 
+                [class.bg-teal-500]="currentView() === 'symptom-analyzer'" 
+                [class.text-white]="currentView() === 'symptom-analyzer'" 
+                [class.shadow-lg]="currentView() === 'symptom-analyzer'"
+                [class.shadow-teal-500/40]="currentView() === 'symptom-analyzer'"
+                class="flex items-center px-5 py-2.5 rounded-full text-gray-600 font-semibold hover:bg-teal-100 hover:text-teal-700 transition-all duration-300 transform hover:-translate-y-0.5">
+          <i class="fas fa-stethoscope ml-2"></i>
+          <span>تحليل الأعراض</span>
+        </button>
+
+        <button (click)="currentView.set('explorer')" 
+                [class.bg-teal-500]="currentView() === 'explorer'" 
+                [class.text-white]="currentView() === 'explorer'" 
+                [class.shadow-lg]="currentView() === 'explorer'"
+                [class.shadow-teal-500/40]="currentView() === 'explorer'"
+                class="flex items-center px-5 py-2.5 rounded-full text-gray-600 font-semibold hover:bg-teal-100 hover:text-teal-700 transition-all duration-300 transform hover:-translate-y-0.5">
+          <i class="fas fa-compass ml-2"></i>
+          <span>استكشف الأنظمة</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container mx-auto p-6">
+    @if (currentView() === 'assessment') {
+      <div class="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-xl animate-fade-in">
+        <h2 class="text-3xl font-bold text-center text-teal-700 mb-2 flex items-center justify-center">
+          <i class="fas fa-file-medical text-teal-500 ml-3"></i>
+          التقييم الشامل والاحترافي
+        </h2>
+        <p class="text-center text-gray-600 mb-8">نحن لا نبدأ بالتغذية، بل نبدأ بفهمك! أدخل بياناتك للحصول على توصية فورية.</p>
+
+        <form (ngSubmit)="calculateMetrics()" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          <!-- Personal Info -->
+          <div class="form-group">
+            <label for="gender" class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-venus-mars w-4 mr-2 text-gray-400"></i>الجنس</label>
+            <select id="gender" name="gender" [(ngModel)]="userData().gender" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+              <option value="male">ذكر</option>
+              <option value="female">أنثى</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="age" class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-birthday-cake w-4 mr-2 text-gray-400"></i>العمر (سنوات)</label>
+            <input type="number" id="age" name="age" [(ngModel)]="userData().age" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+          
+          <!-- Measurements -->
+          <div class="form-group">
+            <label for="weight" class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-weight-scale w-4 mr-2 text-gray-400"></i>الوزن الحالي (كجم)</label>
+            <input type="number" id="weight" name="weight" [(ngModel)]="userData().weight" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+          <div class="form-group">
+            <label for="height" class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-ruler-vertical w-4 mr-2 text-gray-400"></i>الطول (سم)</label>
+            <input type="number" id="height" name="height" [(ngModel)]="userData().height" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+          
+          <!-- Goals -->
+          <div class="form-group">
+            <label for="targetWeight" class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-bullseye w-4 mr-2 text-gray-400"></i>الوزن المستهدف (كجم)</label>
+            <input type="number" id="targetWeight" name="targetWeight" [(ngModel)]="userData().targetWeight" required class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+          </div>
+          <div class="form-group">
+            <label for="goal" class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-flag-checkered w-4 mr-2 text-gray-400"></i>الهدف الأساسي</label>
+            <select id="goal" name="goal" [(ngModel)]="userData().goal" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+              <option value="lose">إنقاص الوزن</option>
+              <option value="gain">بناء العضلات</option>
+              <option value="maintain">الحفاظ على الوزن</option>
+            </select>
+          </div>
+          
+          <!-- Activity Level -->
+          <div class="form-group md:col-span-2">
+            <label for="activityLevel" class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-person-running w-4 mr-2 text-gray-400"></i>مستوى النشاط</label>
+            <select id="activityLevel" name="activityLevel" [(ngModel)]="userData().activityLevel" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+              <option value="1.2">خامل (عمل مكتبي)</option>
+              <option value="1.375">نشاط خفيف (تمارين 1-3 أيام/أسبوع)</option>
+              <option value="1.55">نشاط متوسط (تمارين 3-5 أيام/أسبوع)</option>
+              <option value="1.725">نشاط عالٍ (تمارين 6-7 أيام/أسبوع)</option>
+              <option value="1.9">نشاط عالٍ جداً (وظيفة بدنية أو تدريب مكثف)</option>
+            </select>
+          </div>
+
+          <!-- Dietary Preference -->
+          <div class="form-group md:col-span-2">
+            <label for="dietaryPreference" class="block text-sm font-medium text-gray-700 mb-1 flex items-center"><i class="fas fa-leaf w-4 mr-2 text-gray-400"></i>التفضيلات الغذائية</label>
+            <select id="dietaryPreference" name="dietaryPreference" [(ngModel)]="userData().dietaryPreference" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+              <option value="standard">عادي (يشمل كل شيء)</option>
+              <option value="vegetarian">نباتي (لا يشمل اللحوم والدواجن)</option>
+              <option value="vegan">نباتي صرف (لا يشمل أي منتجات حيوانية)</option>
+            </select>
+          </div>
+          
+          <!-- Health Conditions & Allergies -->
+          <div class="md:col-span-2 space-y-4 p-4 bg-gray-50 rounded-lg border">
+              <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center"><i class="fas fa-stethoscope w-4 mr-2 text-gray-400"></i>الحالات الصحية (اختياري)</label>
+                  <div class="flex flex-wrap gap-x-4 gap-y-2">
+                      @for (condition of healthConditionsOptions; track condition) {
+                          <div class="flex items-center">
+                              <input type="checkbox" [id]="condition" [value]="condition" (change)="onHealthConditionChange($event, condition)" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer">
+                              <label [for]="condition" class="mr-2 text-sm text-gray-700 cursor-pointer">{{condition}}</label>
+                          </div>
+                      }
+                  </div>
+              </div>
+              <hr/>
+              <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center"><i class="fas fa-triangle-exclamation w-4 mr-2 text-gray-400"></i>الحساسيات الغذائية (اختياري)</label>
+                  <div class="flex flex-wrap gap-x-4 gap-y-2">
+                      @for (allergy of allergiesOptions; track allergy) {
+                          <div class="flex items-center">
+                              <input type="checkbox" [id]="allergy" [value]="allergy" (change)="onAllergyChange($event, allergy)" class="h-4 w-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500 cursor-pointer">
+                              <label [for]="allergy" class="mr-2 text-sm text-gray-700 cursor-pointer">{{allergy}}</label>
+                          </div>
+                      }
+                  </div>
+              </div>
+          </div>
+          
+          <div class="md:col-span-2 mt-6">
+            <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:-translate-y-1 duration-300 shadow-lg shadow-teal-500/50 hover:shadow-xl hover:shadow-teal-600/40 flex items-center justify-center">
+              <i class="fas fa-calculator ml-2"></i>
+              احسب الآن
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+
+    @if (currentView() === 'results' && results(); as res) {
+      <div class="max-w-5xl mx-auto space-y-8">
+        <!-- Results Section -->
+        <div class="bg-white p-8 rounded-xl shadow-xl animate-fade-in">
+          <h2 class="text-3xl font-bold text-center text-teal-700 mb-8 flex items-center justify-center">
+            <i class="fas fa-chart-pie text-teal-500 ml-3"></i>
+            نتائج التقييم الخاصة بك
+          </h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center mb-8">
+            <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <i class="fas fa-weight-scale fa-2x text-teal-500 mb-3"></i>
+              <h3 class="text-lg font-semibold text-gray-600">مؤشر كتلة الجسم (BMI)</h3>
+              <p class="text-4xl font-bold text-teal-600 my-2">{{ res.bmi }}</p>
+              <p class="px-3 py-1 rounded-full text-sm font-semibold" [class]="getBmiCategory(res.bmi) === 'وزن طبيعي' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'">
+                {{ getBmiCategory(res.bmi) }}
+              </p>
+            </div>
+            <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <i class="fas fa-fire-flame-curved fa-2x text-orange-500 mb-3"></i>
+              <h3 class="text-lg font-semibold text-gray-600">الأيض الأساسي (BMR)</h3>
+              <p class="text-4xl font-bold text-teal-600 my-2">{{ res.bmr }}</p>
+              <p class="text-sm text-gray-500">سعر حراري/يوم</p>
+            </div>
+            <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+              <i class="fas fa-person-snowboarding fa-2x text-blue-500 mb-3"></i>
+              <h3 class="text-lg font-semibold text-gray-600">إجمالي السعرات (TDEE)</h3>
+              <p class="text-4xl font-bold text-teal-600 my-2">{{ res.tdee }}</p>
+              <p class="text-sm text-gray-500">سعر حراري/يوم</p>
+            </div>
+          </div>
+
+          <div class="bg-teal-50 border-r-4 border-teal-500 p-6 rounded-lg mb-8 shadow-sm">
+            <h3 class="text-xl font-bold text-teal-800 mb-2 flex items-center"><i class="fas fa-lightbulb mr-2"></i>التوصية المبدئية</h3>
+            <p class="text-gray-700">بناءً على بياناتك، النظام الأنسب لك هو: <span class="font-bold">{{ res.recommendedDiet }}</span>. هذه توصية أولية، ولخطة مفصلة يرجى التواصل معنا.</p>
+          </div>
+
+          <div class="text-center">
+            <h3 class="text-xl font-bold text-gray-800">متابعة التقدم</h3>
+            <p class="text-gray-600">أنت على بعد خطوات من هدفك!</p>
+            <div class="w-full bg-gray-200 rounded-full h-6 mt-4 overflow-hidden">
+              <div class="bg-gradient-to-r from-teal-400 to-blue-500 h-6 rounded-full transition-all duration-1000 ease-out" [style.width.%]="(userData().targetWeight / userData().weight) * 100"></div>
+            </div>
+            <div class="flex justify-between text-sm mt-2 font-medium">
+              <span>{{ userData().weight }} كجم (الحالي)</span>
+              <span class="text-teal-600">الفارق: <span class="font-bold">{{ weightDifference() }} كجم</span></span>
+              <span>{{ userData().targetWeight }} كجم (الهدف)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meal Plan Generator -->
+        <div class="bg-white p-8 rounded-xl shadow-xl animate-fade-in">
+          <h2 class="text-3xl font-bold text-center text-teal-700 mb-2 flex items-center justify-center">
+            <i class="fas fa-utensils text-teal-500 ml-3"></i>
+            إنشاء خطة وجبات مقترحة
+          </h2>
+          <p class="text-center text-gray-600 mb-8">أدخل سعراتك الحرارية واختر نظامك المفضل للحصول على خطة يومية مقترحة.</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div>
+              <label for="calories" class="block text-sm font-medium text-gray-700">السعرات الحرارية</label>
+              <input type="number" id="calories" [(ngModel)]="targetCalories" class="mt-1 block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+            </div>
+            <div>
+              <label for="dietType" class="block text-sm font-medium text-gray-700">نوع النظام</label>
+              <select id="dietType" [(ngModel)]="selectedDiet" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500">
+                @for (diet of dietOptions; track diet) {
+                  <option [value]="diet">{{ diet }}</option>
+                }
+              </select>
+            </div>
+            <button (click)="generateMealPlan()" [disabled]="isGeneratingPlan()" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2.5 px-4 rounded-lg transition-all transform hover:-translate-y-1 duration-300 disabled:bg-teal-400 disabled:shadow-none disabled:transform-none shadow-lg shadow-teal-500/50 hover:shadow-xl hover:shadow-teal-600/40 flex items-center justify-center">
+              @if (isGeneratingPlan()) {
+                <i class="fas fa-spinner fa-spin"></i>
+                <span class="mr-2">جاري الإنشاء...</span>
+              } @else {
+                <i class="fas fa-magic-sparkles mr-2"></i>
+                <span>أنشئ الخطة</span>
+              }
+            </button>
+          </div>
+
+          @if (mealPlanError()) {
+            <div class="mt-4 text-center text-red-600 bg-red-100 p-3 rounded-md border border-red-300">{{ mealPlanError() }}</div>
+          }
+
+          @if (mealPlan(); as plan) {
+            <div class="mt-8 animate-fade-in">
+              <h3 class="text-2xl font-semibold text-center text-gray-800 mb-4">خطتك اليومية المقترحة (~{{plan.totalCalories}} سعر حراري)</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                @for (meal of plan.meals; track meal.name) {
+                  <div class="bg-gray-50 border-l-4 border-teal-500 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <h4 class="font-bold text-lg text-teal-700 flex items-center">
+                      <i class="fas {{getMealIcon(meal.name)}} w-5 mr-2"></i>
+                      {{ meal.name }}
+                    </h4>
+                    <p class="font-semibold text-gray-800">{{ meal.dish }}</p>
+                    <p class="text-sm text-gray-500 mb-2">~{{ meal.calories }} سعر حراري</p>
+                    <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                      @for (ingredient of meal.ingredients; track ingredient) {
+                        <li>{{ ingredient }}</li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="text-center mt-4">
+          <button (click)="resetForm()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg transition duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5">
+            <i class="fas fa-arrow-rotate-left mr-2"></i>
+            إجراء تقييم جديد
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (currentView() === 'explorer') {
+      <app-diet-explorer></app-diet-explorer>
+    }
+
+    @if (currentView() === 'symptom-analyzer') {
+      <app-symptom-analyzer></app-symptom-analyzer>
+    }
+  </main>
+
+  <app-footer></app-footer>
+</div>
